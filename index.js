@@ -6,10 +6,10 @@ let buttonsActions = {save: 0, clearCible: 0}
 
 window.addEventListener('load', function () {
     console.log('Tous les éléments de la page sont complètement chargés.');
-    console.log('buttonsActions', buttonsActions)
     save.disabled = true;
     clearCrew.disabled = true;
     deleteCibleContains.disabled = true
+    displayNumberPlayersAvailable()
 });
 
 function dragstart_handler(ev) {
@@ -22,7 +22,6 @@ function dragstart_handler(ev) {
 function hidePlayerSelected(selectedPlayer){
     buttonsActions.clearCible = 0
     buttonsActions.save = 0
-    console.log('buttonsActions', buttonsActions)
     const array = Object.entries(listItems)
     if(selectedPlayer){
         for (let i=0; i< array.length; i++){
@@ -54,6 +53,8 @@ function drop_handler(ev) {
 
     deleteCibleContains.disabled = false
     save.disabled = false;
+    updateNumberPlayersAvailable()
+    displayNumberPlayersAvailable()
 
     const data = ev.dataTransfer.getData("text");
 
@@ -77,9 +78,10 @@ const deleteCibleContains = document.getElementById('btn');
 deleteCibleContains.addEventListener('click', function reset() {
     buttonsActions.clearCible = 1
     disableButtonSave()
-    console.log('buttonsActions', buttonsActions)
     cible.innerHTML = "";
     players = []
+    displayItemsHidden()
+    displayNumberPlayersAvailable()
 });
 
 clearCrew.addEventListener('click', function clear(){
@@ -92,7 +94,6 @@ const equipe = document.getElementById('equipe')
 save.addEventListener('click', function save() {
     buttonsActions.save = 1
     disableButtonSave()
-    console.log('buttonsActions', buttonsActions)
     clearCrew.disabled = false;
     cible.innerHTML = "";
     const savedPlayers = deleteDoublon (players);
@@ -118,3 +119,46 @@ function disableButtonSave(){
     }
 }
 
+function displayItemsHidden(){
+    const items = Object.entries(listItems);
+    if(Array.isArray(items)){
+        for (let i=0; i< items.length; i++){
+            if(items[i][1].hasAttribute("hidden")){
+                document.getElementById(items[i][1].id).hidden = false
+            }
+        }
+    }
+}
+
+function countNumberPlayersAvailable(){
+    const sum = Array.from(listItems).reduce((acc, curr) => {
+        return acc + 1;
+    }, 0);
+    return sum;
+}
+
+function displayNumberPlayersAvailable(){
+    let h2 = document.getElementById("title-player-available");
+
+    let span = h2.querySelector('span');
+
+    if (!span) {
+        span = document.createElement('span');
+        h2.appendChild(span);
+    }
+
+    span.textContent = ` ${updateNumberPlayersAvailable()}`;
+}
+
+function updateNumberPlayersAvailable(){
+    let numbersOfPlayersAvailable = countNumberPlayersAvailable();
+    const items = Array.from(listItems);
+    let counter = 0;
+    for(let i=0; i<items.length; i++){
+        if(items[i].hasAttribute('hidden')){
+            counter += 1;
+        }
+    }
+    numbersOfPlayersAvailable -= counter;
+    return numbersOfPlayersAvailable;
+}
