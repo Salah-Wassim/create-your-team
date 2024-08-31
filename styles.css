@@ -1,0 +1,28 @@
+#cible {
+    border: solid 1px #000;
+    width: 500px;
+    height: 500px;
+}
+.source{
+    cursor: pointer;
+}
+.equipe-container{
+    display: flex;
+    flex-direction: row;
+    margin-top: 25px;
+    margin-bottom: 20px;
+}
+
+.title-equipe{
+    margin: 0;
+}
+
+.btn-reset{
+    height: fit-content;
+}
+
+.btn-reset-container{
+    text-align: center;
+    margin-top: 6px;
+    margin-left: 35px;
+}
