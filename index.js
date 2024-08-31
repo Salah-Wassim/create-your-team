@@ -9,6 +9,7 @@ window.addEventListener('load', function () {
     save.disabled = true;
     clearCrew.disabled = true;
     deleteCibleContains.disabled = true
+    displayNumberPlayersAvailable()
 });
 
 function dragstart_handler(ev) {
@@ -52,6 +53,8 @@ function drop_handler(ev) {
 
     deleteCibleContains.disabled = false
     save.disabled = false;
+    updateNumberPlayersAvailable()
+    displayNumberPlayersAvailable()
 
     const data = ev.dataTransfer.getData("text");
 
@@ -78,6 +81,7 @@ deleteCibleContains.addEventListener('click', function reset() {
     cible.innerHTML = "";
     players = []
     displayItemsHidden()
+    displayNumberPlayersAvailable()
 });
 
 clearCrew.addEventListener('click', function clear(){
@@ -124,4 +128,37 @@ function displayItemsHidden(){
             }
         }
     }
+}
+
+function countNumberPlayersAvailable(){
+    const sum = Array.from(listItems).reduce((acc, curr) => {
+        return acc + 1;
+    }, 0);
+    return sum;
+}
+
+function displayNumberPlayersAvailable(){
+    let h2 = document.getElementById("title-player-available");
+
+    let span = h2.querySelector('span');
+
+    if (!span) {
+        span = document.createElement('span');
+        h2.appendChild(span);
+    }
+
+    span.textContent = ` ${updateNumberPlayersAvailable()}`;
+}
+
+function updateNumberPlayersAvailable(){
+    let numbersOfPlayersAvailable = countNumberPlayersAvailable();
+    const items = Array.from(listItems);
+    let counter = 0;
+    for(let i=0; i<items.length; i++){
+        if(items[i].hasAttribute('hidden')){
+            counter += 1;
+        }
+    }
+    numbersOfPlayersAvailable -= counter;
+    return numbersOfPlayersAvailable;
 }
