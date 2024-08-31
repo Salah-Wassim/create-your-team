@@ -6,7 +6,6 @@ let buttonsActions = {save: 0, clearCible: 0}
 
 window.addEventListener('load', function () {
     console.log('Tous les éléments de la page sont complètement chargés.');
-    console.log('buttonsActions', buttonsActions)
     save.disabled = true;
     clearCrew.disabled = true;
     deleteCibleContains.disabled = true
@@ -22,7 +21,6 @@ function dragstart_handler(ev) {
 function hidePlayerSelected(selectedPlayer){
     buttonsActions.clearCible = 0
     buttonsActions.save = 0
-    console.log('buttonsActions', buttonsActions)
     const array = Object.entries(listItems)
     if(selectedPlayer){
         for (let i=0; i< array.length; i++){
@@ -77,9 +75,9 @@ const deleteCibleContains = document.getElementById('btn');
 deleteCibleContains.addEventListener('click', function reset() {
     buttonsActions.clearCible = 1
     disableButtonSave()
-    console.log('buttonsActions', buttonsActions)
     cible.innerHTML = "";
     players = []
+    displayItemsHidden()
 });
 
 clearCrew.addEventListener('click', function clear(){
@@ -92,7 +90,6 @@ const equipe = document.getElementById('equipe')
 save.addEventListener('click', function save() {
     buttonsActions.save = 1
     disableButtonSave()
-    console.log('buttonsActions', buttonsActions)
     clearCrew.disabled = false;
     cible.innerHTML = "";
     const savedPlayers = deleteDoublon (players);
@@ -118,3 +115,13 @@ function disableButtonSave(){
     }
 }
 
+function displayItemsHidden(){
+    const items = Object.entries(listItems);
+    if(Array.isArray(items)){
+        for (let i=0; i< items.length; i++){
+            if(items[i][1].hasAttribute("hidden")){
+                document.getElementById(items[i][1].id).hidden = false
+            }
+        }
+    }
+}
