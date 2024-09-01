@@ -3,6 +3,8 @@ const clearCrew = document.getElementById('reset');
 const listItems = document.querySelectorAll('#myList li');
 let players = [];
 let buttonsActions = {save: 0, clearCible: 0}
+let countOfPlayersSelected = 0
+let counterBtnSaveIsClicked = 0;
 
 window.addEventListener('load', function () {
     console.log('Tous les éléments de la page sont complètement chargés.');
@@ -75,13 +77,14 @@ function drop_handler(ev) {
 
 const deleteCibleContains = document.getElementById('btn');
 
-deleteCibleContains.addEventListener('click', function reset() {
-    buttonsActions.clearCible = 1
-    disableButtonSave()
+deleteCibleContains.addEventListener('click', function () {
+    buttonsActions.clearCible = 1;
     cible.innerHTML = "";
-    players = []
-    displayItemsHidden()
-    displayNumberPlayersAvailable()
+    players = [];
+    countOfPlayersSelected = 0;
+    disableButtonSave();
+    displayItemsHidden();
+    displayNumberPlayersAvailable();
 });
 
 clearCrew.addEventListener('click', function clear(){
@@ -93,13 +96,17 @@ const equipe = document.getElementById('equipe')
 
 save.addEventListener('click', function save() {
     buttonsActions.save = 1
+    counterBtnSaveIsClicked += 1;
     disableButtonSave()
+    countNumberPlayersSelected()
+    displayNumberPlayersAvailable()
     clearCrew.disabled = false;
     cible.innerHTML = "";
     const savedPlayers = deleteDoublon (players);
     players = [];
-    return savedPlayers.map(savedPlayer => {
-        equipe.innerHTML += `${savedPlayer.innerHTML},`
+
+    savedPlayers.forEach(savedPlayer => {
+        equipe.innerHTML += `${savedPlayer.innerHTML}, `;
     });
 })
 
@@ -169,8 +176,18 @@ function updateNumberPlayersAvailable(){
     return numbersOfPlayersAvailable;
 }
 
-function countNumberPlayersSelected(){
+function countNumberPlayersSelected() {
     const items = Array.from(listItems).length;
-    let playersSelected = items - updateNumberPlayersAvailable()
-    return playersSelected
+
+    if (buttonsActions.save === 0 && buttonsActions.clearCible === 0) {
+        if (counterBtnSaveIsClicked < 1) {
+            countOfPlayersSelected = items - updateNumberPlayersAvailable();
+        } else {
+            countOfPlayersSelected += 1;
+        }
+    } else if (buttonsActions.save === 1 || buttonsActions.clearCible === 1) {
+        countOfPlayersSelected = 0;
+    }
+
+    return countOfPlayersSelected;
 }
