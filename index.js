@@ -139,15 +139,21 @@ function countNumberPlayersAvailable(){
 
 function displayNumberPlayersAvailable(){
     let h2 = document.getElementById("title-player-available");
+    let h2Selected = document.getElementById("title-player-selected");
 
     let span = h2.querySelector('span');
+    let spanSelected = h2Selected.querySelector('span')
 
     if (!span) {
         span = document.createElement('span');
         h2.appendChild(span);
+        
+        spanSelected = document.createElement('span');
+        h2Selected.appendChild(spanSelected)
     }
 
     span.textContent = ` ${updateNumberPlayersAvailable()}`;
+    spanSelected.textContent = ` ${countNumberPlayersSelected()}`;
 }
 
 function updateNumberPlayersAvailable(){
@@ -161,4 +167,10 @@ function updateNumberPlayersAvailable(){
     }
     numbersOfPlayersAvailable -= counter;
     return numbersOfPlayersAvailable;
+}
+
+function countNumberPlayersSelected(){
+    const items = Array.from(listItems).length;
+    let playersSelected = items - updateNumberPlayersAvailable()
+    return playersSelected
 }
