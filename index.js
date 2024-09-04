@@ -12,6 +12,7 @@ window.addEventListener('load', function () {
     clearCrew.disabled = true;
     deleteCibleContains.disabled = true
     displayNumberPlayersAvailable()
+    localStorage.setItem('saveIsClicked', counterBtnSaveIsClicked)
 });
 
 function dragstart_handler(ev) {
@@ -64,6 +65,15 @@ function drop_handler(ev) {
 
     players.push(dataValue);
 
+    if(localStorage.getItem('saveIsClicked') >= 1){
+
+        let dataValueIdArray = JSON.parse(localStorage.getItem('dataValueIdArray')) || [];
+
+        dataValueIdArray.push(dataValue.id);
+
+        localStorage.setItem('dataValueIdArray', JSON.stringify(dataValueIdArray));
+    }
+
     const even = (player) => player !== dataValue;
     
     if(players.some(even)){
@@ -78,6 +88,12 @@ function drop_handler(ev) {
 const deleteCibleContains = document.getElementById('btn');
 
 deleteCibleContains.addEventListener('click', function () {
+
+    let lastname = localStorage.getItem('saveIsClicked');
+    console.log("lastname", lastname)
+
+    console.log(JSON.parse(localStorage.getItem('dataValueIdArray')));
+
     buttonsActions.clearCible = 1;
     cible.innerHTML = "";
     players = [];
@@ -88,6 +104,7 @@ deleteCibleContains.addEventListener('click', function () {
 });
 
 clearCrew.addEventListener('click', function clear(){
+    localStorage.clear();
     document.location.reload();
 })
 
@@ -96,7 +113,8 @@ const equipe = document.getElementById('equipe')
 
 save.addEventListener('click', function save() {
     buttonsActions.save = 1
-    counterBtnSaveIsClicked += 1;
+    //counterBtnSaveIsClicked += 1;
+    localStorage.setItem('saveIsClicked', counterBtnSaveIsClicked += 1)
     disableButtonSave()
     countNumberPlayersSelected()
     displayNumberPlayersAvailable()
@@ -180,7 +198,7 @@ function countNumberPlayersSelected() {
     const items = Array.from(listItems).length;
 
     if (buttonsActions.save === 0 && buttonsActions.clearCible === 0) {
-        if (counterBtnSaveIsClicked < 1) {
+        if (localStorage.getItem('saveIsClicked') < 1) {
             countOfPlayersSelected = items - updateNumberPlayersAvailable();
         } else {
             countOfPlayersSelected += 1;
