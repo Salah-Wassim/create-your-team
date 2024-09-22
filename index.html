@@ -10,6 +10,9 @@
 <body>
     <h1>Composez votre équipe</h1>
 
+    <input type="text" id="input-create-new-player" class="create-new-player" placeholder="nom du joueur" value="" oninput="disabledButtonAddNewPlayer(this.value)">
+    <button id="btn-add-player">Ajouter</button>
+
     <h2 id="title-player-available">Joueurs disponible</h2>
 
     <ul id="myList">

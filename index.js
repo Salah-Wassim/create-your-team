@@ -1,9 +1,11 @@
 const cible = document.getElementById('cible');
 const clearCrew = document.getElementById('reset');
 const listItems = document.querySelectorAll('#myList li');
+const inputCreateNewPlayer = document.getElementById("input-create-new-player");
+
 let players = [];
 let equipeArray = [];
-let buttonsActions = {save: 0, clearCible: 0}
+let buttonsActions = {save: 0, clearCible: 0, addPlayer: 0}
 let countOfPlayersSelected = 0
 let counterBtnSaveIsClicked = 0;
 
@@ -13,8 +15,10 @@ window.addEventListener('load', function () {
     save.disabled = true;
     clearCrew.disabled = true;
     deleteCibleContains.disabled = true
+    disabledButtonAddNewPlayer (inputCreateNewPlayer.value)
     displayNumberPlayersAvailable()
     localStorage.setItem('saveIsClicked', counterBtnSaveIsClicked)
+    localStorage.setItem('newPlayerAdded', buttonsActions.addPlayer)
 });
 
 function dragstart_handler(ev) {
@@ -161,9 +165,11 @@ function displayItemsHidden(){
 }
 
 function countNumberPlayersAvailable(){
+    const listItems = document.querySelectorAll('#myList li');
     const sum = Array.from(listItems).reduce((acc, curr) => {
         return acc + 1;
     }, 0);
+
     return sum;
 }
 
@@ -201,7 +207,10 @@ function updateNumberPlayersAvailable(){
 
 function countNumberPlayersSelected() {
     const items = Array.from(listItems).length;
-
+    
+    let hasValue = cible.hasChildNodes() ? "Yes" : "No";
+    console.log("hasValue", hasValue);
+    
     if (buttonsActions.save === 0 && buttonsActions.clearCible === 0) {
         if (localStorage.getItem('saveIsClicked') < 1) {
             countOfPlayersSelected = items - updateNumberPlayersAvailable();
@@ -213,4 +222,35 @@ function countNumberPlayersSelected() {
     }
 
     return countOfPlayersSelected;
+}
+
+const addNewPlayer = document.getElementById("btn-add-player");
+
+addNewPlayer.addEventListener("click", function addPlayer() {
+    if(inputCreateNewPlayer.value){
+        localStorage.setItem('newPlayerAdded', buttonsActions.addPlayer = 1)
+        const li = document.createElement("li");
+        li.id = inputCreateNewPlayer.value;
+        li.className = 'source';
+        li.draggable = true;
+        li.ondragstart = function(event) {
+            dragstart_handler(event);
+        };
+        const textNode = document.createTextNode(inputCreateNewPlayer.value);
+        li.appendChild(textNode);
+        document.getElementById("myList").appendChild(li)
+        inputCreateNewPlayer.value = ""
+        disabledButtonAddNewPlayer(inputCreateNewPlayer.value)
+        displayNumberPlayersAvailable()
+    }  
+})
+
+function disabledButtonAddNewPlayer (value){
+    if(value){
+        addNewPlayer.disabled = false
+    }
+    else{
+        addNewPlayer.disabled = true
+        localStorage.setItem('newPlayerAdded', buttonsActions.addPlayer = 0)
+    }
 }
