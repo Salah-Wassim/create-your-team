@@ -147,13 +147,15 @@ function disableButtonSave(){
 function displayItemsHidden(){    
     const items = Object.entries(listItems);
     let itemsToShow = [];
-    if(Array.isArray(items)){
+    if(Array.isArray(items) && items.length >= 1){
         for (let i=0; i< items.length; i++){
             itemsToShow.push(items[i][1].id);
         }
         const filterItemsToShowId = itemsToShow.filter(item => !equipeArray.includes(item)) 
-        for(let i=0; i<filterItemsToShowId.length; i++){
-            document.getElementById(filterItemsToShowId[i]).hidden = false
+        if(Array.isArray(filterItemsToShowId) && filterItemsToShowId.length >= 1){
+            for(let i=0; i<filterItemsToShowId.length; i++){
+                document.getElementById(filterItemsToShowId[i]).hidden = false
+            }
         }
     }
 }
