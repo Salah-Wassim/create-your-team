@@ -2,11 +2,13 @@ const cible = document.getElementById('cible');
 const clearCrew = document.getElementById('reset');
 const listItems = document.querySelectorAll('#myList li');
 let players = [];
+let equipeArray = [];
 let buttonsActions = {save: 0, clearCible: 0}
 let countOfPlayersSelected = 0
 let counterBtnSaveIsClicked = 0;
 
 window.addEventListener('load', function () {
+    localStorage.clear();
     console.log('Tous les éléments de la page sont complètement chargés.');
     save.disabled = true;
     clearCrew.disabled = true;
@@ -88,12 +90,10 @@ function drop_handler(ev) {
 const deleteCibleContains = document.getElementById('btn');
 
 deleteCibleContains.addEventListener('click', function () {
-
-    let lastname = localStorage.getItem('saveIsClicked');
-    console.log("lastname", lastname)
-
-    console.log(JSON.parse(localStorage.getItem('dataValueIdArray')));
-
+    let dataValueIdStorage = JSON.parse(localStorage.getItem('dataValueIdArray')) || []
+    if(localStorage.getItem('saveIsClicked') >= 1){
+        dataValueIdStorage
+    }
     buttonsActions.clearCible = 1;
     cible.innerHTML = "";
     players = [];
@@ -113,17 +113,17 @@ const equipe = document.getElementById('equipe')
 
 save.addEventListener('click', function save() {
     buttonsActions.save = 1
-    //counterBtnSaveIsClicked += 1;
     localStorage.setItem('saveIsClicked', counterBtnSaveIsClicked += 1)
     disableButtonSave()
     countNumberPlayersSelected()
     displayNumberPlayersAvailable()
     clearCrew.disabled = false;
     cible.innerHTML = "";
-    const savedPlayers = deleteDoublon (players);
+    let savedPlayers = deleteDoublon(players) || [];
     players = [];
-
+    
     savedPlayers.forEach(savedPlayer => {
+        equipeArray.push(savedPlayer.id)
         equipe.innerHTML += `${savedPlayer.innerHTML}, `;
     });
 })
@@ -144,13 +144,16 @@ function disableButtonSave(){
     }
 }
 
-function displayItemsHidden(){
+function displayItemsHidden(){    
     const items = Object.entries(listItems);
+    let itemsToShow = [];
     if(Array.isArray(items)){
         for (let i=0; i< items.length; i++){
-            if(items[i][1].hasAttribute("hidden")){
-                document.getElementById(items[i][1].id).hidden = false
-            }
+            itemsToShow.push(items[i][1].id);
+        }
+        const filterItemsToShowId = itemsToShow.filter(item => !equipeArray.includes(item)) 
+        for(let i=0; i<filterItemsToShowId.length; i++){
+            document.getElementById(filterItemsToShowId[i]).hidden = false
         }
     }
 }
