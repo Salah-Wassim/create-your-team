@@ -29,6 +29,7 @@ function dragstart_handler(ev) {
 }
 
 function hidePlayerSelected(selectedPlayer){
+    const listItems = document.querySelectorAll('#myList li');
     buttonsActions.clearCible = 0
     buttonsActions.save = 0
     const array = Object.entries(listItems)
@@ -55,6 +56,14 @@ function deleteDoublon (array) {
     }, []);
 
     return array;
+}
+
+function createElement(element, value, id){
+    let node = document.createElement(element); 
+    const textNode = document.createTextNode(value); 
+    node.appendChild(textNode);
+    document.getElementById(id).appendChild(node);
+    return node;
 }
 
 function drop_handler(ev) {
@@ -84,10 +93,10 @@ function drop_handler(ev) {
     
     if(players.some(even)){
         const playerFilter = players.filter(player => player === dataValue)
-        return cible.innerHTML += `${playerFilter[0].innerHTML}<br>`;
+        return createElement("p", playerFilter[0].innerHTML, "cible")
     }
     else{
-        return cible.innerHTML += `${players[0].innerHTML}<br>`;
+        return createElement("p", players[0].innerHTML, "cible")
     }
 }
 
@@ -149,6 +158,7 @@ function disableButtonSave(){
 }
 
 function displayItemsHidden(){    
+    const listItems = document.querySelectorAll('#myList li');
     const items = Object.entries(listItems);
     let itemsToShow = [];
     if(Array.isArray(items) && items.length >= 1){
@@ -193,6 +203,7 @@ function displayNumberPlayersAvailable(){
 }
 
 function updateNumberPlayersAvailable(){
+    const listItems = document.querySelectorAll('#myList li');
     let numbersOfPlayersAvailable = countNumberPlayersAvailable();
     const items = Array.from(listItems);
     let counter = 0;
@@ -206,11 +217,9 @@ function updateNumberPlayersAvailable(){
 }
 
 function countNumberPlayersSelected() {
+    const listItems = document.querySelectorAll('#myList li');
     const items = Array.from(listItems).length;
-    
-    let hasValue = cible.hasChildNodes() ? "Yes" : "No";
-    console.log("hasValue", hasValue);
-    
+
     if (buttonsActions.save === 0 && buttonsActions.clearCible === 0) {
         if (localStorage.getItem('saveIsClicked') < 1) {
             countOfPlayersSelected = items - updateNumberPlayersAvailable();
