@@ -235,8 +235,37 @@ function countNumberPlayersSelected() {
 
 const addNewPlayer = document.getElementById("btn-add-player");
 
+function checkInputUserValue (value){
+    let isCorrectInputUserValue = false;
+    let message = "Ce joueur existe déja"
+    
+    const listItems = document.querySelectorAll('#myList li');
+    const items = Array.from(listItems);
+
+    let isValueExistInList = items.reduce((acc, currentPlayer) => {
+        if(currentPlayer.innerHTML === value){
+            acc.result = true
+        }
+        return acc
+    }, {result: false})
+
+    if(value && value.length >= 3){
+        if(isValueExistInList.result){
+            document.getElementById("error").innerHTML = message
+            isCorrectInputUserValue = false
+        } else {
+            isCorrectInputUserValue = true
+            document.getElementById("error").innerHTML = ""
+        }
+    } else {
+        isCorrectInputUserValue = false
+    }
+
+    return isCorrectInputUserValue
+}
+
 addNewPlayer.addEventListener("click", function addPlayer() {
-    if(inputCreateNewPlayer.value){
+    if(checkInputUserValue (inputCreateNewPlayer.value)){
         localStorage.setItem('newPlayerAdded', buttonsActions.addPlayer = 1)
         const li = document.createElement("li");
         li.id = inputCreateNewPlayer.value;
@@ -255,7 +284,7 @@ addNewPlayer.addEventListener("click", function addPlayer() {
 })
 
 function disabledButtonAddNewPlayer (value){
-    if(value){
+    if(checkInputUserValue(value)){
         addNewPlayer.disabled = false
     }
     else{
