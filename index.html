@@ -10,6 +10,17 @@
 <body>
     <h1>Composez votre équipe</h1>
 
+    <div id="create-player" class="create-player-container">
+        <div class="span-info-container">
+            <span class="info">Le nom du joueur doit comporter au moins 3 caractères</span>
+        </div>
+        <div id="form" class="form-container">
+            <input type="text" id="input-create-new-player" class="create-new-player" placeholder="nom du joueur" value="" oninput="disabledButtonAddNewPlayer(this.value)" required>
+            <button id="btn-add-player">Ajouter</button>
+        </div>
+        <span id="error" class="info"></span>
+    </div>
+
     <h2 id="title-player-available">Joueurs disponible</h2>
 
     <ul id="myList">

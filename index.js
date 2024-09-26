@@ -1,9 +1,11 @@
 const cible = document.getElementById('cible');
 const clearCrew = document.getElementById('reset');
 const listItems = document.querySelectorAll('#myList li');
+const inputCreateNewPlayer = document.getElementById("input-create-new-player");
+
 let players = [];
 let equipeArray = [];
-let buttonsActions = {save: 0, clearCible: 0}
+let buttonsActions = {save: 0, clearCible: 0, addPlayer: 0}
 let countOfPlayersSelected = 0
 let counterBtnSaveIsClicked = 0;
 
@@ -13,8 +15,10 @@ window.addEventListener('load', function () {
     save.disabled = true;
     clearCrew.disabled = true;
     deleteCibleContains.disabled = true
+    disabledButtonAddNewPlayer (inputCreateNewPlayer.value)
     displayNumberPlayersAvailable()
     localStorage.setItem('saveIsClicked', counterBtnSaveIsClicked)
+    localStorage.setItem('newPlayerAdded', buttonsActions.addPlayer)
 });
 
 function dragstart_handler(ev) {
@@ -25,6 +29,7 @@ function dragstart_handler(ev) {
 }
 
 function hidePlayerSelected(selectedPlayer){
+    const listItems = document.querySelectorAll('#myList li');
     buttonsActions.clearCible = 0
     buttonsActions.save = 0
     const array = Object.entries(listItems)
@@ -51,6 +56,14 @@ function deleteDoublon (array) {
     }, []);
 
     return array;
+}
+
+function createElement(element, value, id){
+    let node = document.createElement(element); 
+    const textNode = document.createTextNode(value); 
+    node.appendChild(textNode);
+    document.getElementById(id).appendChild(node);
+    return node;
 }
 
 function drop_handler(ev) {
@@ -80,10 +93,10 @@ function drop_handler(ev) {
     
     if(players.some(even)){
         const playerFilter = players.filter(player => player === dataValue)
-        return cible.innerHTML += `${playerFilter[0].innerHTML}<br>`;
+        return createElement("p", playerFilter[0].innerHTML, "cible")
     }
     else{
-        return cible.innerHTML += `${players[0].innerHTML}<br>`;
+        return createElement("p", players[0].innerHTML, "cible")
     }
 }
 
@@ -145,6 +158,7 @@ function disableButtonSave(){
 }
 
 function displayItemsHidden(){    
+    const listItems = document.querySelectorAll('#myList li');
     const items = Object.entries(listItems);
     let itemsToShow = [];
     if(Array.isArray(items) && items.length >= 1){
@@ -161,9 +175,11 @@ function displayItemsHidden(){
 }
 
 function countNumberPlayersAvailable(){
+    const listItems = document.querySelectorAll('#myList li');
     const sum = Array.from(listItems).reduce((acc, curr) => {
         return acc + 1;
     }, 0);
+
     return sum;
 }
 
@@ -187,6 +203,7 @@ function displayNumberPlayersAvailable(){
 }
 
 function updateNumberPlayersAvailable(){
+    const listItems = document.querySelectorAll('#myList li');
     let numbersOfPlayersAvailable = countNumberPlayersAvailable();
     const items = Array.from(listItems);
     let counter = 0;
@@ -200,6 +217,7 @@ function updateNumberPlayersAvailable(){
 }
 
 function countNumberPlayersSelected() {
+    const listItems = document.querySelectorAll('#myList li');
     const items = Array.from(listItems).length;
 
     if (buttonsActions.save === 0 && buttonsActions.clearCible === 0) {
@@ -213,4 +231,64 @@ function countNumberPlayersSelected() {
     }
 
     return countOfPlayersSelected;
+}
+
+const addNewPlayer = document.getElementById("btn-add-player");
+
+function checkInputUserValue (value){
+    let isCorrectInputUserValue = false;
+    let message = "Ce joueur existe déja"
+    
+    const listItems = document.querySelectorAll('#myList li');
+    const items = Array.from(listItems);
+
+    let isValueExistInList = items.reduce((acc, currentPlayer) => {
+        if(currentPlayer.innerHTML === value){
+            acc.result = true
+        }
+        return acc
+    }, {result: false})
+
+    if(value && value.length >= 3){
+        if(isValueExistInList.result){
+            document.getElementById("error").innerHTML = message
+            isCorrectInputUserValue = false
+        } else {
+            isCorrectInputUserValue = true
+            document.getElementById("error").innerHTML = ""
+        }
+    } else {
+        isCorrectInputUserValue = false
+    }
+
+    return isCorrectInputUserValue
+}
+
+addNewPlayer.addEventListener("click", function addPlayer() {
+    if(checkInputUserValue (inputCreateNewPlayer.value)){
+        localStorage.setItem('newPlayerAdded', buttonsActions.addPlayer = 1)
+        const li = document.createElement("li");
+        li.id = inputCreateNewPlayer.value;
+        li.className = 'source';
+        li.draggable = true;
+        li.ondragstart = function(event) {
+            dragstart_handler(event);
+        };
+        const textNode = document.createTextNode(inputCreateNewPlayer.value);
+        li.appendChild(textNode);
+        document.getElementById("myList").appendChild(li)
+        inputCreateNewPlayer.value = ""
+        disabledButtonAddNewPlayer(inputCreateNewPlayer.value)
+        displayNumberPlayersAvailable()
+    }  
+})
+
+function disabledButtonAddNewPlayer (value){
+    if(checkInputUserValue(value)){
+        addNewPlayer.disabled = false
+    }
+    else{
+        addNewPlayer.disabled = true
+        localStorage.setItem('newPlayerAdded', buttonsActions.addPlayer = 0)
+    }
 }
