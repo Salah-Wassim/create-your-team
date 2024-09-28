@@ -8,6 +8,7 @@ let equipeArray = [];
 let buttonsActions = {save: 0, clearCible: 0, addPlayer: 0}
 let countOfPlayersSelected = 0
 let counterBtnSaveIsClicked = 0;
+let isAddPlayerButtonIsClicked = false;
 
 window.addEventListener('load', function () {
     localStorage.clear();
@@ -71,7 +72,7 @@ function drop_handler(ev) {
 
     deleteCibleContains.disabled = false
     save.disabled = false;
-    updateNumberPlayersAvailable()
+    //updateNumberPlayersAvailable()
     displayNumberPlayersAvailable()
 
     const data = ev.dataTransfer.getData("text");
@@ -128,7 +129,7 @@ save.addEventListener('click', function save() {
     buttonsActions.save = 1
     localStorage.setItem('saveIsClicked', counterBtnSaveIsClicked += 1)
     disableButtonSave()
-    countNumberPlayersSelected()
+    //countNumberPlayersSelected()
     displayNumberPlayersAvailable()
     clearCrew.disabled = false;
     cible.innerHTML = "";
@@ -213,6 +214,7 @@ function updateNumberPlayersAvailable(){
         }
     }
     numbersOfPlayersAvailable -= counter;
+
     return numbersOfPlayersAvailable;
 }
 
@@ -220,13 +222,17 @@ function countNumberPlayersSelected() {
     const listItems = document.querySelectorAll('#myList li');
     const items = Array.from(listItems).length;
 
-    if (buttonsActions.save === 0 && buttonsActions.clearCible === 0) {
-        if (localStorage.getItem('saveIsClicked') < 1) {
-            countOfPlayersSelected = items - updateNumberPlayersAvailable();
-        } else {
+    if (localStorage.getItem('saveIsClicked') < 1 && buttonsActions.clearCible === 0) {
+        countOfPlayersSelected = items - updateNumberPlayersAvailable();
+    }
+    if (localStorage.getItem('saveIsClicked') >= 1 && buttonsActions.clearCible === 0) {
+        if(!isAddPlayerButtonIsClicked){
             countOfPlayersSelected += 1;
+        }else{
+            countOfPlayersSelected
         }
-    } else if (buttonsActions.save === 1 || buttonsActions.clearCible === 1) {
+    }
+    if (buttonsActions.save === 1 || buttonsActions.clearCible === 1) {
         countOfPlayersSelected = 0;
     }
 
@@ -266,7 +272,8 @@ function checkInputUserValue (value){
 
 addNewPlayer.addEventListener("click", function addPlayer() {
     if(checkInputUserValue (inputCreateNewPlayer.value)){
-        localStorage.setItem('newPlayerAdded', buttonsActions.addPlayer = 1)
+        isAddPlayerButtonIsClicked = true;
+        setCurrentValueOfAddPlayer()
         const li = document.createElement("li");
         li.id = inputCreateNewPlayer.value;
         li.className = 'source';
@@ -280,8 +287,18 @@ addNewPlayer.addEventListener("click", function addPlayer() {
         inputCreateNewPlayer.value = ""
         disabledButtonAddNewPlayer(inputCreateNewPlayer.value)
         displayNumberPlayersAvailable()
+
+        setTimeout(function (){
+            isAddPlayerButtonIsClicked = false;
+        }, 2000)
     }  
 })
+
+function setCurrentValueOfAddPlayer(){
+    let currentValueAddPlayer = parseInt(localStorage.getItem('newPlayerAdded')) || 0;
+    buttonsActions.addPlayer = currentValueAddPlayer += 1
+    localStorage.setItem('newPlayerAdded', buttonsActions.addPlayer);
+}
 
 function disabledButtonAddNewPlayer (value){
     if(checkInputUserValue(value)){
@@ -289,6 +306,5 @@ function disabledButtonAddNewPlayer (value){
     }
     else{
         addNewPlayer.disabled = true
-        localStorage.setItem('newPlayerAdded', buttonsActions.addPlayer = 0)
     }
 }
